@@ -59,12 +59,12 @@ public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule {
   private Fetch fetch;
   private Map<String, Integer> idToRequestId = new HashMap<>();
   @SuppressLint("UseSparseArrays")
-  private Map<Integer, TaskConfig> requestIdToConfig = new HashMap<>();
+  private Map<Integer, RNBGDTaskConfig> requestIdToConfig = new HashMap<>();
   private DeviceEventManagerModule.RCTDeviceEventEmitter ee;
   private Date lastProgressReport = new Date();
   private WritableArray progressReports = Arguments.createArray();
 
-  public RNFBGDModule(ReactApplicationContext reactContext) {
+  public RNBackgroundDownloadModule(ReactApplicationContext reactContext) {
     super(reactContext);
 
     loadConfigMap();
@@ -112,7 +112,7 @@ public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule {
   }
 
   private void removeFromMaps(int requestId) {
-    TaskConfig config = requestIdToConfig.get(requestId);
+    RNBGDTaskConfig config = requestIdToConfig.get(requestId);
     if (config != null) {
       idToRequestId.remove(config.id);
       requestIdToConfig.remove(requestId);
@@ -137,7 +137,7 @@ public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule {
     File file = new File(this.getReactApplicationContext().getFilesDir(), "RNFileBackgroundDownload_configMap");
     try {
       ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file));
-      requestIdToConfig = (Map<Integer, TaskConfig>) inputStream.readObject();
+      requestIdToConfig = (Map<Integer, RNBGDTaskConfig>) inputStream.readObject();
     } catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
     }
@@ -155,7 +155,7 @@ public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule {
       return;
     }
 
-    TaskConfig config = new TaskConfig(id);
+    RNBGDTaskConfig config = new RNBGDTaskConfig(id);
     Request request = new Request(url, destination);
     request.setPriority(options.hasKey("priority") ? Priority.valueOf(options.getInt("priority")) : Priority.NORMAL);
     request.setNetworkType(options.hasKey("network") ? NetworkType.valueOf(options.getInt("network")) : NetworkType.ALL);
@@ -199,7 +199,7 @@ public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule {
 
         for (Download download : downloads) {
           if (requestIdToConfig.containsKey(download.getId())) {
-            TaskConfig config = requestIdToConfig.get(download.getId());
+            RNBGDTaskConfig config = requestIdToConfig.get(download.getId());
             WritableMap params = Arguments.createMap();
             params.putString("id", config.id);
             params.putInt("state", stateMap.get(download.getStatus()));
@@ -258,7 +258,7 @@ public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule {
 
   @Override
   public void onProgress(Download download, long l, long l1) {
-    TaskConfig config = requestIdToConfig.get(download.getId());
+    RNBGDTaskConfig config = requestIdToConfig.get(download.getId());
     WritableMap params = Arguments.createMap();
     params.putString("id", config.id);
 
