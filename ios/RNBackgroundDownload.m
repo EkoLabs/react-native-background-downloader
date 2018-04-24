@@ -7,7 +7,7 @@
 //
 //
 #import "RNBackgroundDownload.h"
-#import "TaskConfig.h"
+#import "RNBGDTaskConfig.h"
 
 #define URL_TO_CONFIG_MAP_KEY @"com.eko.bgdownloadmap"
 
@@ -16,8 +16,8 @@ static CompletionHandler storedCompletionHandler;
 @implementation RNBackgroundDownload {
     NSURLSession *urlSession;
     NSURLSessionConfiguration *sessionConfig;
-    NSMutableDictionary<NSString *, TaskConfig *> *urlToConfigMap;
-    NSMutableDictionary<NSURLSessionTask *, TaskConfig *> *taskToConfigMap;
+    NSMutableDictionary<NSString *, RNBGDTaskConfig *> *urlToConfigMap;
+    NSMutableDictionary<NSURLSessionTask *, RNBGDTaskConfig *> *taskToConfigMap;
     NSMutableDictionary<NSString *, NSURLSessionDownloadTask *> *idToTaskMap;
     NSMutableDictionary<NSString *, NSData *> *idToResumeDataMap;
     NSMutableDictionary<NSString *, NSNumber *> *idToPercentMap;
@@ -81,7 +81,7 @@ RCT_EXPORT_MODULE();
 }
 
 - (void)removeTaskFromMap: (NSURLSessionTask *)task {
-    TaskConfig *taskConfig = taskToConfigMap[task];
+    RNBGDTaskConfig *taskConfig = taskToConfigMap[task];
     [taskToConfigMap removeObjectForKey:task];
     [urlToConfigMap removeObjectForKey:task.currentRequest.URL.absoluteString];
     [[NSUserDefaults standardUserDefaults] setObject:[self serialize: urlToConfigMap] forKey:URL_TO_CONFIG_MAP_KEY];
@@ -116,7 +116,7 @@ RCT_EXPORT_METHOD(download: (NSDictionary *) options) {
     
     [self lazyInitSession];
     NSURLSessionDownloadTask *task = [urlSession downloadTaskWithURL:[NSURL URLWithString:url]];
-    TaskConfig *taskConfig = [[TaskConfig alloc] initWithDictionary: @{@"id": identifier, @"destination": destination}];
+    RNBGDTaskConfig *taskConfig = [[RNBGDTaskConfig alloc] initWithDictionary: @{@"id": identifier, @"destination": destination}];
     taskToConfigMap[task] = taskConfig;
     idToTaskMap[identifier] = task;
     idToPercentMap[identifier] = @0.0;
@@ -153,7 +153,7 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
         for (NSURLSessionDownloadTask *foundTask in downloadTasks) {
             NSURLSessionDownloadTask __strong *task = foundTask;
             NSLog(@"Found task with url: %@", task.currentRequest.URL.absoluteString);
-            TaskConfig *taskConfig = urlToConfigMap[task.currentRequest.URL.absoluteString];
+            RNBGDTaskConfig *taskConfig = urlToConfigMap[task.currentRequest.URL.absoluteString];
             if (taskConfig) {
                 if (task.state == NSURLSessionTaskStateCompleted && task.countOfBytesReceived < task.countOfBytesExpectedToReceive) {
                     if (task.error && task.error.code == -999 && task.error.userInfo[NSURLSessionDownloadTaskResumeData] != nil) {
@@ -185,7 +185,7 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
 
 #pragma mark - NSURLSessionDownloadDelegate methods
 - (void)URLSession:(nonnull NSURLSession *)session downloadTask:(nonnull NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(nonnull NSURL *)location {
-    TaskConfig *taskCofig = taskToConfigMap[downloadTask];
+    RNBGDTaskConfig *taskCofig = taskToConfigMap[downloadTask];
     if (taskCofig != nil) {
         NSFileManager *fileManager = [NSFileManager defaultManager];
         NSURL *destURL = [NSURL fileURLWithPath:taskCofig.destination];
@@ -208,7 +208,7 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
 }
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
-    TaskConfig *taskCofig = taskToConfigMap[downloadTask];
+    RNBGDTaskConfig *taskCofig = taskToConfigMap[downloadTask];
     if (taskCofig != nil) {
         if (!taskCofig.reportedBegin) {
             [self sendEventWithName:@"downloadBegin" body:@{@"id": taskCofig.id, @"expctedBytes": [NSNumber numberWithLongLong: totalBytesExpectedToWrite]}];
@@ -236,7 +236,7 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error {
-    TaskConfig *taskCofig = taskToConfigMap[task];
+    RNBGDTaskConfig *taskCofig = taskToConfigMap[task];
     if (error != nil && error.code != -999 && taskCofig != nil) {
         if (self.bridge) {
             [self sendEventWithName:@"downloadFailed" body:@{@"id": taskCofig.id, @"error": [error localizedDescription]}];

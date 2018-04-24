@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TaskConfig : NSObject <NSCoding>
+@interface RNBGDTaskConfig : NSObject <NSCoding>
 
 @property NSString * _Nonnull id;
 @property NSString * _Nonnull destination;
@@ -18,7 +18,7 @@
 
 @end
 
-@implementation TaskConfig
+@implementation RNBGDTaskConfig
 
 - (id _Nullable )initWithDictionary: (NSDictionary *_Nonnull)dict {
     self = [super init];
