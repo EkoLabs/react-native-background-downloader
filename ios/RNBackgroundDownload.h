@@ -17,7 +17,7 @@
 
 typedef void (^CompletionHandler)();
 
-@interface RNFileBackgroundDownload : RCTEventEmitter <RCTBridgeModule, NSURLSessionDelegate, NSURLSessionDownloadDelegate>
+@interface RNBackgroundDownload : RCTEventEmitter <RCTBridgeModule, NSURLSessionDelegate, NSURLSessionDownloadDelegate>
 
 + (void)setCompletionHandlerWithIdentifier: (NSString *)identifier completionHandler: (CompletionHandler)completionHandler;
 
