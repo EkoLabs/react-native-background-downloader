@@ -36,6 +36,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule implements FetchListener {
 
   private static final int TASK_RUNNING = 0;
