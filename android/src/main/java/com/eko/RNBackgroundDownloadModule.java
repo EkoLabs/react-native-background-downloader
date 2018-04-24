@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.ekoapp.BuildConfig;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -37,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule {
+public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule implements FetchListener {
 
   private static final int TASK_RUNNING = 0;
   private static final int TASK_SUSPENDED = 1;
