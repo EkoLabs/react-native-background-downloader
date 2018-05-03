@@ -125,8 +125,8 @@ An object containing options properties
 | `id`          | String          | ✅        | All       | Unique ID you give to this download. This ID will help identifying the download task when it is returned to you when the app re-launches                                        |
 | `url`         | String          | ✅        | All       | URL to file you want to download                                                                                                                                                |
 | `destination` | String          | ✅        | All       | Where to copy the file to once the download is done                                                                                                                             |
-| `priority`    | Priority (enum) |          | Android   | The priority of the download. On Android, simultaneous downloads is limited to 4 and the rest are queued, priority helps picking the next download. **Default:** Priority.MEDIUM |
-| `network`     | Network (enum)  |          | Android   | Give your the ability to limit the download to WIFI only. **Default:** Network.ALL                                                                                              |
+| `priority`    | [Priority (enum)](#priority-enum---android-only) |          | Android   | The priority of the download. On Android, simultaneous downloads is limited to 4 and the rest are queued, priority helps picking the next download. **Default:** Priority.MEDIUM |
+| `network`     | [Network (enum)](#network-enum---android-only)  |          | Android   | Give your the ability to limit the download to WIFI only. **Default:** Network.ALL                                                                                              |
 
 **returns**
 
