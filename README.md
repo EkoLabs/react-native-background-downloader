@@ -1,7 +1,7 @@
 
 # react-native-background-download
 
-A library for React-Native to help you download large files on iOS and Android both in the foreground and most impotently in the background.
+A library for React-Native to help you download large files on iOS and Android both in the foreground and most importantly in the background.
 
 ## ToC
 
