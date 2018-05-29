@@ -10,7 +10,7 @@ This API handles your downloads separately from your app and only keeps it infor
 
 On Android we are simulating this process with a separate service dedicated to just downloading to make sure your downloads don't stop even if your main activity is.
 
-The real challenge using this method it making sure the app's UI if always up-to-date with the downloads that are happening in another process because your app might startup from scratch while the downloads are still running.
+The real challenge using this method is making sure the app's UI if always up-to-date with the downloads that are happening in another process because your app might startup from scratch while the downloads are still running.
 
 `react-native-background-download` gives you an easy API to both downloading large files and re-attaching to those downloads once your app launches again.
 
