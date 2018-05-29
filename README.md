@@ -1,7 +1,7 @@
 
 # react-native-background-download
 
-A library for React-Native to help you download large files on iOS and Android both in the foreground and most impotently in the background.
+A library for React-Native to help you download large files on iOS and Android both in the foreground and most importantly in the background.
 
 ### Why?
 On iOS, if you want to download big files no matter the state of your app, wether it's in the background or terminated by the OS, you have to use a system API called `NSURLSession`.
