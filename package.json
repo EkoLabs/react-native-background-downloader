@@ -1,11 +1,10 @@
-
 {
   "name": "react-native-background-download",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [
     "react-native"
@@ -14,5 +13,13 @@
   "license": "",
   "peerDependencies": {
     "react-native": "^0.41.2"
+  },
+  "devDependencies": {
+    "jest": "^23.1.0",
+    "react-native": "^0.55.4"
+  },
+  "jest": {
+    "preset": "react-native",
+    "setupFiles": ["./__mocks__/RNBackgroundDownload.js"]
   }
 }
