@@ -20,6 +20,9 @@
   },
   "jest": {
     "preset": "react-native",
-    "setupFiles": ["./__mocks__/RNBackgroundDownload.js"]
+    "setupFiles": [
+      "./__mocks__/RNBackgroundDownload.js",
+      "./node_modules/react-native/Libraries/EventEmitter/__mocks__/NativeEventEmitter.js"
+    ]
   }
 }
