@@ -25,7 +25,6 @@ RNBackgroundDownloadEmitter.addListener('downloadFailed', event => {
 });
 
 RNBackgroundDownloadEmitter.addListener('downloadBegin', event => {
-    console.log('GOT downloadBegin', event);
     let task = tasksMap.get(event.id);
     task && task._onBegin(event.expctedBytes);
 });
@@ -33,7 +32,6 @@ RNBackgroundDownloadEmitter.addListener('downloadBegin', event => {
 export function checkForExistingDownloads() {
     return RNBackgroundDownload.checkForExistingDownloads()
         .then(foundTasks => {
-            console.log('Fond lost downloads!!: ', foundTasks);
             return foundTasks.map(taskInfo => {
                 let task = new DownloadTask(taskInfo);
                 if (taskInfo.state === RNBackgroundDownload.TaskRunning) {
