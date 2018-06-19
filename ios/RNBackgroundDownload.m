@@ -124,7 +124,7 @@ RCT_EXPORT_METHOD(download: (NSDictionary *) options) {
     [task resume];
 }
 
-RCT_EXPORT_METHOD(puaseTask: (NSString *)identifier) {
+RCT_EXPORT_METHOD(pauseTask: (NSString *)identifier) {
     NSURLSessionDownloadTask *task = idToTaskMap[identifier];
     if (task != nil && task.state == NSURLSessionTaskStateRunning) {
         [task suspend];

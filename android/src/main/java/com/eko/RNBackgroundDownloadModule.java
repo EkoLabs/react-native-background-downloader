@@ -168,7 +168,7 @@ public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule imple
   }
 
   @ReactMethod
-  public void puaseTask(String identifier) {
+  public void pauseTask(String identifier) {
     Integer requestId = idToRequestId.get(identifier);
     if (requestId != null) {
       fetch.pause(requestId);
