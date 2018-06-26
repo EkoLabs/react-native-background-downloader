@@ -8,25 +8,33 @@ const tasksMap = new Map();
 RNBackgroundDownloadEmitter.addListener('downloadProgress', events => {
     for (let event of events) {
         let task = tasksMap.get(event.id);
-        task && task._onProgress(event.percent, event.written, event.total);
+        if (task) {
+            task._onProgress(event.percent, event.written, event.total);
+        }
     }
 });
 
 RNBackgroundDownloadEmitter.addListener('downloadComplete', event => {
     let task = tasksMap.get(event.id);
-    task && task._onDone(event.location);
+    if (task) {
+        task._onDone(event.location);
+    }
     tasksMap.delete(event.id);
 });
 
 RNBackgroundDownloadEmitter.addListener('downloadFailed', event => {
     let task = tasksMap.get(event.id);
-    task && task._onError(event.error);
+    if (task) {
+        task._onError(event.error);
+    }
     tasksMap.delete(event.id);
 });
 
 RNBackgroundDownloadEmitter.addListener('downloadBegin', event => {
     let task = tasksMap.get(event.id);
-    task && task._onBegin(event.expctedBytes);
+    if (task) {
+        task._onBegin(event.expctedBytes);
+    }
 });
 
 export function checkForExistingDownloads() {

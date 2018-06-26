@@ -213,3 +213,9 @@ An absolute path to the app's documents directory. It is recommended that you us
 `Network.WIFI_ONLY`
 
 `Network.ALL` - Default ✅
+
+## Author
+Developed by [Elad Gil](https://github.com/ptelad) of [Eko](http://www.helloeko.com)
+
+## License
+Apache 2
