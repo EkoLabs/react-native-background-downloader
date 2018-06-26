@@ -1,6 +1,6 @@
-import { NativeModules } from 'react-native';
+/* eslint-disable */
 
-const listeners = {};
+import { NativeModules } from 'react-native';
 
 // states:
 // 0 - Running

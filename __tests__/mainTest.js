@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 jest.mock('NativeEventEmitter', () => {
     return class NativeEventEmitter {
         static listeners = {};
@@ -146,4 +148,28 @@ test('checkForExistingDownloads', () => {
                 expect(foundDownload.state).not.toBe('STOPPED');
             });
         })
-})
+});
+
+test('wrong handler type', () => {
+    let dt = RNBackgroundDownload.download({
+        id: 'test22222',
+        url: 'test',
+        destination: 'test'
+    });
+
+    expect(() => {
+        dt.begin('not function');
+    }).toThrow('handler must be a function');
+
+    expect(() => {
+        dt.progress(7);
+    }).toThrow('handler must be a function');
+
+    expect(() => {
+        dt.done({iamnota: 'function'});
+    }).toThrow('handler must be a function');
+
+    expect(() => {
+        dt.error('not function');
+    }).toThrow('handler must be a function');
+});
