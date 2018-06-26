@@ -33,7 +33,7 @@ RNBackgroundDownloadEmitter.addListener('downloadFailed', event => {
 RNBackgroundDownloadEmitter.addListener('downloadBegin', event => {
     let task = tasksMap.get(event.id);
     if (task) {
-        task._onBegin(event.expctedBytes);
+        task._onBegin(event.expectedBytes);
     }
 });
 

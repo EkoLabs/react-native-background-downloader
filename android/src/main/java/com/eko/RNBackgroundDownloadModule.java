@@ -264,7 +264,7 @@ public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule imple
     params.putString("id", config.id);
 
     if (!config.reportedBegin) {
-      params.putInt("expctedBytes", (int)download.getTotal());
+      params.putInt("expectedBytes", (int)download.getTotal());
       ee.emit("downloadBegin", params);
       config.reportedBegin = true;
     } else {

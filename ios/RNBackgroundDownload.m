@@ -211,7 +211,7 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
     RNBGDTaskConfig *taskCofig = taskToConfigMap[downloadTask];
     if (taskCofig != nil) {
         if (!taskCofig.reportedBegin) {
-            [self sendEventWithName:@"downloadBegin" body:@{@"id": taskCofig.id, @"expctedBytes": [NSNumber numberWithLongLong: totalBytesExpectedToWrite]}];
+            [self sendEventWithName:@"downloadBegin" body:@{@"id": taskCofig.id, @"expectedBytes": [NSNumber numberWithLongLong: totalBytesExpectedToWrite]}];
             urlToConfigMap[downloadTask.currentRequest.URL.absoluteString] = taskCofig;
             [[NSUserDefaults standardUserDefaults] setObject:[self serialize: urlToConfigMap] forKey:URL_TO_CONFIG_MAP_KEY];
             taskCofig.reportedBegin = YES;
