@@ -41,7 +41,7 @@ test('begin event', () => {
         });
         NativeEventEmitter.listeners.downloadBegin({
             id: 'testBegin',
-            expctedBytes: 9001
+            expectedBytes: 9001
         });
     });
 });
@@ -159,17 +159,17 @@ test('wrong handler type', () => {
 
     expect(() => {
         dt.begin('not function');
-    }).toThrow('handler must be a function');
+    }).toThrow();
 
     expect(() => {
         dt.progress(7);
-    }).toThrow('handler must be a function');
+    }).toThrow();
 
     expect(() => {
         dt.done({iamnota: 'function'});
-    }).toThrow('handler must be a function');
+    }).toThrow();
 
     expect(() => {
         dt.error('not function');
-    }).toThrow('handler must be a function');
+    }).toThrow();
 });

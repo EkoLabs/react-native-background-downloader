@@ -53,6 +53,7 @@ export function checkForExistingDownloads() {
                     if (taskInfo.bytesWritten === taskInfo.totalBytes) {
                         task.state = 'DONE';
                     } else {
+                        // IOS completed the download but it was not done.
                         return null;
                     }
                 }
