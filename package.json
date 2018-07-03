@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "prepack": "jest && npm run lint",
+    "prepublish": "jest && npm run lint",
     "lint": "eslint index.js lib/**"
   },
   "keywords": [
