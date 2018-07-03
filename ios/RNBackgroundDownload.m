@@ -21,9 +21,9 @@ static CompletionHandler storedCompletionHandler;
     NSMutableDictionary<NSString *, NSURLSessionDownloadTask *> *idToTaskMap;
     NSMutableDictionary<NSString *, NSData *> *idToResumeDataMap;
     NSMutableDictionary<NSString *, NSNumber *> *idToPercentMap;
+    NSMutableDictionary<NSString *, NSDictionary *> *progressReports;
     NSOperationQueue *downloadOperationsQueue;
     NSDate *lastProgressReport;
-    NSMutableArray<NSDictionary *> *progressReports;
 }
 
 RCT_EXPORT_MODULE();
@@ -68,7 +68,7 @@ RCT_EXPORT_MODULE();
         NSString *sessonIdentifier = [bundleIdentifier stringByAppendingString:@".backgrounddownloadtask"];
         sessionConfig = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:sessonIdentifier];
         downloadOperationsQueue = [[NSOperationQueue alloc] init];
-        progressReports = [[NSMutableArray alloc] init];
+        progressReports = [[NSMutableDictionary alloc] init];
         lastProgressReport = [[NSDate alloc] init];
     }
     return self;
@@ -220,14 +220,14 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
         NSNumber *prevPercent = idToPercentMap[taskCofig.id];
         NSNumber *percent = [NSNumber numberWithFloat:(float)totalBytesWritten/(float)totalBytesExpectedToWrite];
         if ([percent floatValue] - [prevPercent floatValue] > 0.01f) {
-            [progressReports addObject:@{@"id": taskCofig.id, @"written": [NSNumber numberWithLongLong: totalBytesWritten], @"total": [NSNumber numberWithLongLong: totalBytesExpectedToWrite], @"percent": percent}];
+            progressReports[taskCofig.id] = @{@"id": taskCofig.id, @"written": [NSNumber numberWithLongLong: totalBytesWritten], @"total": [NSNumber numberWithLongLong: totalBytesExpectedToWrite], @"percent": percent};
             idToPercentMap[taskCofig.id] = percent;
         }
         
         NSDate *now = [[NSDate alloc] init];
         if ([now timeIntervalSinceDate:lastProgressReport] > 1.5 && progressReports.count > 0) {
             if (self.bridge) {
-                [self sendEventWithName:@"downloadProgress" body:progressReports];
+                [self sendEventWithName:@"downloadProgress" body:[progressReports allValues]];
             }
             lastProgressReport = now;
             [progressReports removeAllObjects];

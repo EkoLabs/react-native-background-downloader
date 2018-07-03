@@ -1,4 +1,3 @@
-
 package com.eko;
 
 import android.annotation.SuppressLint;
@@ -63,7 +62,7 @@ public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule imple
   private Map<Integer, RNBGDTaskConfig> requestIdToConfig = new HashMap<>();
   private DeviceEventManagerModule.RCTDeviceEventEmitter ee;
   private Date lastProgressReport = new Date();
-  private WritableArray progressReports = Arguments.createArray();
+  private HashMap<String, WritableMap> progressReports = new HashMap<>();
 
   public RNBackgroundDownloadModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -271,12 +270,16 @@ public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule imple
       params.putInt("written", (int)download.getDownloaded());
       params.putInt("total", (int)download.getTotal());
       params.putDouble("percent", ((double)download.getProgress()) / 100);
-      progressReports.pushMap(params);
+      progressReports.put(config.id, params);
       Date now = new Date();
       if (now.getTime() - lastProgressReport.getTime() > 1500) {
-        ee.emit("downloadProgress", progressReports);
+        WritableArray reportsArray = Arguments.createArray();
+        for (WritableMap report : progressReports.values()) {
+          reportsArray.pushMap(report);
+        }
+        ee.emit("downloadProgress", reportsArray);
         lastProgressReport = now;
-        progressReports = Arguments.createArray();
+        progressReports.clear();
       }
     }
 
