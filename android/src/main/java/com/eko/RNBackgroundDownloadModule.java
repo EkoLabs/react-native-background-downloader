@@ -242,7 +242,6 @@ public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule imple
     Error error = download.getError();
     Throwable throwable = error.getThrowable();
 
-    Log.e(getName(), error.toString());
     WritableMap params = Arguments.createMap();
     params.putString("id", requestIdToConfig.get(download.getId()).id);
     if (error == Error.UNKNOWN && throwable != null) {

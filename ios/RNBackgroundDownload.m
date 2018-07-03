@@ -110,7 +110,7 @@ RCT_EXPORT_METHOD(download: (NSDictionary *) options) {
     NSString *url = options[@"url"];
     NSString *destination = options[@"destination"];
     if (identifier == nil || url == nil || destination == nil) {
-        NSLog(@"[RNFileBackgroundDownload] [Error] id, url and destination must be set");
+        NSLog(@"[RNFileBackgroundDownload] - [Error] id, url and destination must be set");
         return;
     }
     
@@ -152,7 +152,6 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
         NSMutableArray *idsFound = [[NSMutableArray alloc] init];
         for (NSURLSessionDownloadTask *foundTask in downloadTasks) {
             NSURLSessionDownloadTask __strong *task = foundTask;
-            NSLog(@"Found task with url: %@", task.currentRequest.URL.absoluteString);
             RNBGDTaskConfig *taskConfig = urlToConfigMap[task.currentRequest.URL.absoluteString];
             if (taskConfig) {
                 if (task.state == NSURLSessionTaskStateCompleted && task.countOfBytesReceived < task.countOfBytesExpectedToReceive) {
@@ -246,7 +245,6 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
 }
 
 - (void)URLSessionDidFinishEventsForBackgroundURLSession:(NSURLSession *)session {
-    NSLog(@"in URLSessionDidFinishEventsForBackgroundURLSession");
     if (storedCompletionHandler) {
         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
             storedCompletionHandler();
