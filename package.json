@@ -8,6 +8,10 @@
     "prepublish": "jest && npm run lint",
     "lint": "eslint index.js lib/**"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EkoLabs/react-native-background-download.git"
+  },
   "keywords": [
     "react-native",
     "background",
