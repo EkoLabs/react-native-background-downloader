@@ -10,27 +10,27 @@ jest.mock('NativeEventEmitter', () => {
     };
 });
 
-import RNBackgroundDownload from '../index';
+import RNBackgroundDownloader from '../index';
 import DownloadTask from '../lib/downloadTask';
 import { NativeEventEmitter, NativeModules } from 'react-native';
 
-const RNBackgroundDownloadNative = NativeModules.RNBackgroundDownload;
+const RNBackgroundDownloaderNative = NativeModules.RNBackgroundDownloader;
 
 let downloadTask;
 
 test('download function', () => {
-    downloadTask = RNBackgroundDownload.download({
+    downloadTask = RNBackgroundDownloader.download({
         id: 'test',
         url: 'test',
         destination: 'test'
     });
     expect(downloadTask).toBeInstanceOf(DownloadTask);
-    expect(RNBackgroundDownloadNative.download).toHaveBeenCalled();
+    expect(RNBackgroundDownloaderNative.download).toHaveBeenCalled();
 });
 
 test('begin event', () => {
     return new Promise(resolve => {
-        const beginDT = RNBackgroundDownload.download({
+        const beginDT = RNBackgroundDownloader.download({
             id: 'testBegin',
             url: 'test',
             destination: 'test'
@@ -48,7 +48,7 @@ test('begin event', () => {
 
 test('progress event', () => {
     return new Promise(resolve => {
-        RNBackgroundDownload.download({
+        RNBackgroundDownloader.download({
             id: 'testProgress',
             url: 'test',
             destination: 'test'
@@ -69,7 +69,7 @@ test('progress event', () => {
 
 test('done event', () => {
     return new Promise(resolve => {
-        const doneDT = RNBackgroundDownload.download({
+        const doneDT = RNBackgroundDownloader.download({
             id: 'testDone',
             url: 'test',
             destination: 'test'
@@ -85,7 +85,7 @@ test('done event', () => {
 
 test('fail event', () => {
     return new Promise(resolve => {
-        const failDT = RNBackgroundDownload.download({
+        const failDT = RNBackgroundDownloader.download({
             id: 'testFail',
             url: 'test',
             destination: 'test'
@@ -102,7 +102,7 @@ test('fail event', () => {
 });
 
 test('pause', () => {
-    const pauseDT = RNBackgroundDownload.download({
+    const pauseDT = RNBackgroundDownloader.download({
         id: 'testPause',
         url: 'test',
         destination: 'test'
@@ -110,11 +110,11 @@ test('pause', () => {
 
     pauseDT.pause();
     expect(pauseDT.state).toBe('PAUSED');
-    expect(RNBackgroundDownloadNative.pauseTask).toHaveBeenCalled();
+    expect(RNBackgroundDownloaderNative.pauseTask).toHaveBeenCalled();
 });
 
 test('resume', () => {
-    const resumeDT = RNBackgroundDownload.download({
+    const resumeDT = RNBackgroundDownloader.download({
         id: 'testResume',
         url: 'test',
         destination: 'test'
@@ -122,11 +122,11 @@ test('resume', () => {
 
     resumeDT.resume();
     expect(resumeDT.state).toBe('DOWNLOADING');
-    expect(RNBackgroundDownloadNative.resumeTask).toHaveBeenCalled();
+    expect(RNBackgroundDownloaderNative.resumeTask).toHaveBeenCalled();
 });
 
 test('stop', () => {
-    const stopDT = RNBackgroundDownload.download({
+    const stopDT = RNBackgroundDownloader.download({
         id: 'testStop',
         url: 'test',
         destination: 'test'
@@ -134,13 +134,13 @@ test('stop', () => {
 
     stopDT.stop();
     expect(stopDT.state).toBe('STOPPED');
-    expect(RNBackgroundDownloadNative.stopTask).toHaveBeenCalled();
+    expect(RNBackgroundDownloaderNative.stopTask).toHaveBeenCalled();
 });
 
 test('checkForExistingDownloads', () => {
-    return RNBackgroundDownload.checkForExistingDownloads()
+    return RNBackgroundDownloader.checkForExistingDownloads()
         .then(foundDownloads => {
-            expect(RNBackgroundDownloadNative.checkForExistingDownloads).toHaveBeenCalled();
+            expect(RNBackgroundDownloaderNative.checkForExistingDownloads).toHaveBeenCalled();
             expect(foundDownloads.length).toBe(4);
             foundDownloads.forEach(foundDownload => {
                 expect(foundDownload).toBeInstanceOf(DownloadTask);
@@ -151,7 +151,7 @@ test('checkForExistingDownloads', () => {
 });
 
 test('wrong handler type', () => {
-    let dt = RNBackgroundDownload.download({
+    let dt = RNBackgroundDownloader.download({
         id: 'test22222',
         url: 'test',
         destination: 'test'
