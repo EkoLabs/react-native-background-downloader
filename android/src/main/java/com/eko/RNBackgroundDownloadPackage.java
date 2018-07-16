@@ -10,10 +10,10 @@ import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
 import com.facebook.react.bridge.JavaScriptModule;
-public class RNBackgroundDownloadPackage implements ReactPackage {
+public class RNBackgroundDownloaderPackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-      return Arrays.<NativeModule>asList(new RNBackgroundDownloadModule(reactContext));
+      return Arrays.<NativeModule>asList(new RNBackgroundDownloaderModule(reactContext));
     }
 
     @Override

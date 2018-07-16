@@ -1,11 +1,11 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
-const { RNBackgroundDownload } = NativeModules;
-const RNBackgroundDownloadEmitter = new NativeEventEmitter(RNBackgroundDownload);
+const { RNBackgroundDownloader } = NativeModules;
+const RNBackgroundDownloaderEmitter = new NativeEventEmitter(RNBackgroundDownloader);
 import DownloadTask from './lib/downloadTask';
 
 const tasksMap = new Map();
 
-RNBackgroundDownloadEmitter.addListener('downloadProgress', events => {
+RNBackgroundDownloaderEmitter.addListener('downloadProgress', events => {
     for (let event of events) {
         let task = tasksMap.get(event.id);
         if (task) {
@@ -14,7 +14,7 @@ RNBackgroundDownloadEmitter.addListener('downloadProgress', events => {
     }
 });
 
-RNBackgroundDownloadEmitter.addListener('downloadComplete', event => {
+RNBackgroundDownloaderEmitter.addListener('downloadComplete', event => {
     let task = tasksMap.get(event.id);
     if (task) {
         task._onDone(event.location);
@@ -22,7 +22,7 @@ RNBackgroundDownloadEmitter.addListener('downloadComplete', event => {
     tasksMap.delete(event.id);
 });
 
-RNBackgroundDownloadEmitter.addListener('downloadFailed', event => {
+RNBackgroundDownloaderEmitter.addListener('downloadFailed', event => {
     let task = tasksMap.get(event.id);
     if (task) {
         task._onError(event.error);
@@ -30,7 +30,7 @@ RNBackgroundDownloadEmitter.addListener('downloadFailed', event => {
     tasksMap.delete(event.id);
 });
 
-RNBackgroundDownloadEmitter.addListener('downloadBegin', event => {
+RNBackgroundDownloaderEmitter.addListener('downloadBegin', event => {
     let task = tasksMap.get(event.id);
     if (task) {
         task._onBegin(event.expectedBytes);
@@ -38,18 +38,18 @@ RNBackgroundDownloadEmitter.addListener('downloadBegin', event => {
 });
 
 export function checkForExistingDownloads() {
-    return RNBackgroundDownload.checkForExistingDownloads()
+    return RNBackgroundDownloader.checkForExistingDownloads()
         .then(foundTasks => {
             return foundTasks.map(taskInfo => {
                 let task = new DownloadTask(taskInfo);
-                if (taskInfo.state === RNBackgroundDownload.TaskRunning) {
+                if (taskInfo.state === RNBackgroundDownloader.TaskRunning) {
                     task.state = 'DOWNLOADING';
-                } else if (taskInfo.state === RNBackgroundDownload.TaskSuspended) {
+                } else if (taskInfo.state === RNBackgroundDownloader.TaskSuspended) {
                     task.state = 'PAUSED';
-                } else if (taskInfo.state === RNBackgroundDownload.TaskCanceling) {
+                } else if (taskInfo.state === RNBackgroundDownloader.TaskCanceling) {
                     task.stop();
                     return null;
-                } else if (taskInfo.state === RNBackgroundDownload.TaskCompleted) {
+                } else if (taskInfo.state === RNBackgroundDownloader.TaskCompleted) {
                     if (taskInfo.bytesWritten === taskInfo.totalBytes) {
                         task.state = 'DONE';
                     } else {
@@ -65,27 +65,27 @@ export function checkForExistingDownloads() {
 
 export function download(options) {
     if (!options.id || !options.url || !options.destination) {
-        throw new Error('[RNBackgroundDownload] id, url and destination are required');
+        throw new Error('[RNBackgroundDownloader] id, url and destination are required');
     }
-    RNBackgroundDownload.download(options);
+    RNBackgroundDownloader.download(options);
     let task = new DownloadTask(options.id);
     tasksMap.set(options.id, task);
     return task;
 }
 
 export const directories = {
-    documents: RNBackgroundDownload.documents
+    documents: RNBackgroundDownloader.documents
 };
 
 export const Network = {
-    WIFI_ONLY: RNBackgroundDownload.OnlyWifi,
-    ALL: RNBackgroundDownload.AllNetworks
+    WIFI_ONLY: RNBackgroundDownloader.OnlyWifi,
+    ALL: RNBackgroundDownloader.AllNetworks
 };
 
 export const Priority = {
-    HIGH: RNBackgroundDownload.PriorityHigh,
-    MEDIUM: RNBackgroundDownload.PriorityNormal,
-    LOW: RNBackgroundDownload.PriorityLow
+    HIGH: RNBackgroundDownloader.PriorityHigh,
+    MEDIUM: RNBackgroundDownloader.PriorityNormal,
+    LOW: RNBackgroundDownloader.PriorityLow
 };
 
 export default {

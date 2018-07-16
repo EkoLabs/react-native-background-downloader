@@ -1,5 +1,5 @@
 
-# react-native-background-download
+# react-native-background-downloader
 
 A library for React-Native to help you download large files on iOS and Android both in the foreground and most importantly in the background.
 
@@ -12,7 +12,7 @@ On Android we are simulating this process with a separate service dedicated to j
 
 The real challenge using this method is making sure the app's UI if always up-to-date with the downloads that are happening in another process because your app might startup from scratch while the downloads are still running.
 
-`react-native-background-download` gives you an easy API to both downloading large files and re-attaching to those downloads once your app launches again.
+`react-native-background-downloader` gives you an easy API to both downloading large files and re-attaching to those downloads once your app launches again.
 
 ## ToC
 
@@ -22,11 +22,11 @@ The real challenge using this method is making sure the app's UI if always up-to
 
 ## Getting started
 
-`$ npm install react-native-background-download --save`
+`$ npm install react-native-background-downloader --save`
 
 ### Mostly automatic installation
 
-`$ react-native link react-native-background-download`
+`$ react-native link react-native-background-downloader`
 
 ### Manual installation
 
@@ -34,36 +34,36 @@ The real challenge using this method is making sure the app's UI if always up-to
 #### iOS
 
 1. In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
-2. Go to `node_modules` ➜ `react-native-background-download` and add `RNBackgroundDownload.xcodeproj`
-3. In XCode, in the project navigator, select your project. Add `libRNBackgroundDownload.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
+2. Go to `node_modules` ➜ `react-native-background-downloader` and add `RNBackgroundDownloader.xcodeproj`
+3. In XCode, in the project navigator, select your project. Add `libRNBackgroundDownloader.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
 4. Run your project (`Cmd+R`)
 
 #### Android
 
 1. Open up `android/app/src/main/java/[...]/MainActivity.java`
-  - Add `import com.eko.RNBackgroundDownloadPackage;` to the imports at the top of the file
-  - Add `new RNBackgroundDownloadPackage()` to the list returned by the `getPackages()` method
+  - Add `import com.eko.RNBackgroundDownloaderPackage;` to the imports at the top of the file
+  - Add `new RNBackgroundDownloaderPackage()` to the list returned by the `getPackages()` method
 2. Append the following lines to `android/settings.gradle`:
   	```
-  	include ':react-native-background-download'
-  	project(':react-native-background-download').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-background-download/android')
+  	include ':react-native-background-downloader'
+  	project(':react-native-background-downloader').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-background-downloader/android')
   	```
 3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
   	```
-      compile project(':react-native-background-download')
+      compile project(':react-native-background-downloader')
   	```
 
 ### iOS - Extra Mandatory Step
 In your `AppDelegate.m` add the following code:
 ```objc
 ...
-#import <RNBackgroundDownload.h>
+#import <RNBackgroundDownloader.h>
 
 ...
 
 - (void)application:(UIApplication *)application handleEventsForBackgroundURLSession:(NSString *)identifier completionHandler:(void (^)())completionHandler
 {
-  [RNBackgroundDownload setCompletionHandlerWithIdentifier:identifier completionHandler:completionHandler];
+  [RNBackgroundDownloader setCompletionHandlerWithIdentifier:identifier completionHandler:completionHandler];
 }
 
 ...
@@ -75,12 +75,12 @@ Failing to add this code will result in canceled background downloads.
 ### Downloading a file
 
 ```javascript
-import RNBackgroundDownload from 'react-native-background-download';
+import RNBackgroundDownloader from 'react-native-background-downloader';
 
-let task = RNBackgroundDownload.download({
+let task = RNBackgroundDownloader.download({
 	id: 'file123',
 	url: 'https://link-to-very.large/file.zip'
-	destination: `${RNBackgroundDownload.directories.documents}/file.zip`
+	destination: `${RNBackgroundDownloader.directories.documents}/file.zip`
 }).begin((expectedBytes) => {
 	console.log(`Going to download ${expectedBytes} bytes!`);
 }).progress((percent) => {
@@ -110,9 +110,9 @@ What happens to your downloads after the OS stopped your app? Well, they are sti
 Add this code to app's init stage, and you'll never lose a download again!
 
 ```javascript
-import RNBackgroundDownload from 'react-native-background-download';
+import RNBackgroundDownloader from 'react-native-background-downloader';
 
-let lostTasks = await RNBackgroundDownload.checkForExistingDownloads();
+let lostTasks = await RNBackgroundDownloader.checkForExistingDownloads();
 for (let task of lostTask) {
 	console.log(`Task ${task.id} was found!`);
 	task.progress((percent) => {
@@ -129,7 +129,7 @@ for (let task of lostTask) {
 
 ## API
 
-### RNBackgroundDownload
+### RNBackgroundDownloader
 
 ### `download(options)`
 
@@ -161,12 +161,12 @@ Checks for downloads that ran in background while you app was terminated. Recomm
 
 ### DownloadTask
 
-A class representing a download task created by `RNBackgroundDownload.download`
+A class representing a download task created by `RNBackgroundDownloader.download`
 
 ### `Members`
 | Name           | Type   | Info                                                                                                 |
 | -------------- | ------ | ---------------------------------------------------------------------------------------------------- |
-| `id`           | String | The id you gave the task when calling `RNBackgroundDownload.download`                                |
+| `id`           | String | The id you gave the task when calling `RNBackgroundDownloader.download`                                |
 | `percent`      | Number | The current percent of completion of the task between 0 and 1                                        |
 | `bytesWritten` | Number | The number of bytes currently written by the task                                                    |
 | `totalBytes`   | Number | The number bytes expected to be written by this task or more plainly, the file size being downloaded |

@@ -13,7 +13,7 @@
 
 static CompletionHandler storedCompletionHandler;
 
-@implementation RNBackgroundDownload {
+@implementation RNBackgroundDownloader {
     NSURLSession *urlSession;
     NSURLSessionConfiguration *sessionConfig;
     NSMutableDictionary<NSString *, RNBGDTaskConfig *> *urlToConfigMap;

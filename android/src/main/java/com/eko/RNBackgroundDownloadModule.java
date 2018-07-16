@@ -37,7 +37,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule implements FetchListener {
+public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule implements FetchListener {
 
   private static final int TASK_RUNNING = 0;
   private static final int TASK_SUSPENDED = 1;
@@ -64,11 +64,11 @@ public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule imple
   private Date lastProgressReport = new Date();
   private HashMap<String, WritableMap> progressReports = new HashMap<>();
 
-  public RNBackgroundDownloadModule(ReactApplicationContext reactContext) {
+  public RNBackgroundDownloaderModule(ReactApplicationContext reactContext) {
     super(reactContext);
 
     loadConfigMap();
-    fetch = new Fetch.Builder(this.getReactApplicationContext(), "RNBackgroundDownload")
+    fetch = new Fetch.Builder(this.getReactApplicationContext(), "RNBackgroundDownloader")
             .setDownloadConcurrentLimit(4)
             .build();
     fetch.addListener(this);
@@ -81,7 +81,7 @@ public class RNBackgroundDownloadModule extends ReactContextBaseJavaModule imple
 
   @Override
   public String getName() {
-    return "RNBackgroundDownload";
+    return "RNBackgroundDownloader";
   }
 
   @Override

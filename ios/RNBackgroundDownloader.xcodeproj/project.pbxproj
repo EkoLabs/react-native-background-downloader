@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B3E7B58A1CC2AC0600A0062D /* RNBackgroundDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNBackgroundDownload.m */; };
+		B3E7B58A1CC2AC0600A0062D /* RNBackgroundDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNBackgroundDownloader.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,10 +23,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		134814201AA4EA6300B7C361 /* libRNBackgroundDownload.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNBackgroundDownload.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		134814201AA4EA6300B7C361 /* libRNBackgroundDownloader.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNBackgroundDownloader.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		565BF70F208F2C7C00F66231 /* RNBGDTaskConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNBGDTaskConfig.h; sourceTree = "<group>"; };
-		B3E7B5881CC2AC0600A0062D /* RNBackgroundDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNBackgroundDownload.h; sourceTree = "<group>"; };
-		B3E7B5891CC2AC0600A0062D /* RNBackgroundDownload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNBackgroundDownload.m; sourceTree = "<group>"; };
+		B3E7B5881CC2AC0600A0062D /* RNBackgroundDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNBackgroundDownloader.h; sourceTree = "<group>"; };
+		B3E7B5891CC2AC0600A0062D /* RNBackgroundDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNBackgroundDownloader.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,7 +43,7 @@
 		134814211AA4EA7D00B7C361 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				134814201AA4EA6300B7C361 /* libRNBackgroundDownload.a */,
+				134814201AA4EA6300B7C361 /* libRNBackgroundDownloader.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -52,8 +52,8 @@
 			isa = PBXGroup;
 			children = (
 				565BF70F208F2C7C00F66231 /* RNBGDTaskConfig.h */,
-				B3E7B5881CC2AC0600A0062D /* RNBackgroundDownload.h */,
-				B3E7B5891CC2AC0600A0062D /* RNBackgroundDownload.m */,
+				B3E7B5881CC2AC0600A0062D /* RNBackgroundDownloader.h */,
+				B3E7B5891CC2AC0600A0062D /* RNBackgroundDownloader.m */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,9 +61,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		58B511DA1A9E6C8500147676 /* RNBackgroundDownload */ = {
+		58B511DA1A9E6C8500147676 /* RNBackgroundDownloader */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNBackgroundDownload" */;
+			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNBackgroundDownloader" */;
 			buildPhases = (
 				58B511D71A9E6C8500147676 /* Sources */,
 				58B511D81A9E6C8500147676 /* Frameworks */,
@@ -73,9 +73,9 @@
 			);
 			dependencies = (
 			);
-			name = RNBackgroundDownload;
+			name = RNBackgroundDownloader;
 			productName = RCTDataManager;
-			productReference = 134814201AA4EA6300B7C361 /* libRNBackgroundDownload.a */;
+			productReference = 134814201AA4EA6300B7C361 /* libRNBackgroundDownloader.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -92,7 +92,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNBackgroundDownload" */;
+			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNBackgroundDownloader" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -104,7 +104,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				58B511DA1A9E6C8500147676 /* RNBackgroundDownload */,
+				58B511DA1A9E6C8500147676 /* RNBackgroundDownloader */,
 			);
 		};
 /* End PBXProject section */
@@ -114,7 +114,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3E7B58A1CC2AC0600A0062D /* RNBackgroundDownload.m in Sources */,
+				B3E7B58A1CC2AC0600A0062D /* RNBackgroundDownloader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,7 +206,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = RNBackgroundDownload;
+				PRODUCT_NAME = RNBackgroundDownloader;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -222,7 +222,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = RNBackgroundDownload;
+				PRODUCT_NAME = RNBackgroundDownloader;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -230,7 +230,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNBackgroundDownload" */ = {
+		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNBackgroundDownloader" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				58B511ED1A9E6C8500147676 /* Debug */,
@@ -239,7 +239,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNBackgroundDownload" */ = {
+		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNBackgroundDownloader" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				58B511F01A9E6C8500147676 /* Debug */,
