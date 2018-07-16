@@ -6,7 +6,7 @@
 //  Copyright © 2017 Eko. All rights reserved.
 //
 //
-#import "RNBackgroundDownload.h"
+#import "RNBackgroundDownloader.h"
 #import "RNBGDTaskConfig.h"
 
 #define URL_TO_CONFIG_MAP_KEY @"com.eko.bgdownloadmap"
@@ -30,7 +30,7 @@ RCT_EXPORT_MODULE();
 
 - (dispatch_queue_t)methodQueue
 {
-    return dispatch_queue_create("com.eko.backgrounddownload", DISPATCH_QUEUE_SERIAL);
+    return dispatch_queue_create("com.eko.backgrounddownloader", DISPATCH_QUEUE_SERIAL);
 }
 
 - (BOOL)requiresMainQueueSetup {
