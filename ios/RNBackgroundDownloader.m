@@ -33,7 +33,7 @@ RCT_EXPORT_MODULE();
     return dispatch_queue_create("com.eko.backgrounddownloader", DISPATCH_QUEUE_SERIAL);
 }
 
-- (BOOL)requiresMainQueueSetup {
++ (BOOL)requiresMainQueueSetup {
     return YES;
 }
 
