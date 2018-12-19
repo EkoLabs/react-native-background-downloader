@@ -1,3 +1,4 @@
+[![npm version](https://badge.fury.io/js/react-native-background-downloader.svg)](https://badge.fury.io/js/react-native-background-downloader)
 
 # react-native-background-downloader
 
