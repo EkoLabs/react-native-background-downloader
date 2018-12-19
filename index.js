@@ -4,6 +4,7 @@ const RNBackgroundDownloaderEmitter = new NativeEventEmitter(RNBackgroundDownloa
 import DownloadTask from './lib/downloadTask';
 
 const tasksMap = new Map();
+let headers = {};
 
 RNBackgroundDownloaderEmitter.addListener('downloadProgress', events => {
     for (let event of events) {
@@ -37,6 +38,10 @@ RNBackgroundDownloaderEmitter.addListener('downloadBegin', event => {
     }
 });
 
+export function setHeaders(h = {}) {
+    headers = h;
+}
+
 export function checkForExistingDownloads() {
     return RNBackgroundDownloader.checkForExistingDownloads()
         .then(foundTasks => {
@@ -67,6 +72,14 @@ export function download(options) {
     if (!options.id || !options.url || !options.destination) {
         throw new Error('[RNBackgroundDownloader] id, url and destination are required');
     }
+    if (options.headers && typeof options.headers === 'object') {
+        options.headers = {
+            ...headers,
+            ...options.headers
+        };
+    } else {
+        options.headers = headers;
+    }
     RNBackgroundDownloader.download(options);
     let task = new DownloadTask(options.id);
     tasksMap.set(options.id, task);
@@ -91,6 +104,7 @@ export const Priority = {
 export default {
     download,
     checkForExistingDownloads,
+    setHeaders,
     directories,
     Network,
     Priority

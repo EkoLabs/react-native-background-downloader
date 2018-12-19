@@ -109,13 +109,21 @@ RCT_EXPORT_METHOD(download: (NSDictionary *) options) {
     NSString *identifier = options[@"id"];
     NSString *url = options[@"url"];
     NSString *destination = options[@"destination"];
+    NSDictionary *headers = options[@"headers"];
     if (identifier == nil || url == nil || destination == nil) {
-        NSLog(@"[RNFileBackgroundDownload] - [Error] id, url and destination must be set");
+        NSLog(@"[RNBackgroundDownloader] - [Error] id, url and destination must be set");
         return;
     }
-    
     [self lazyInitSession];
-    NSURLSessionDownloadTask *task = [urlSession downloadTaskWithURL:[NSURL URLWithString:url]];
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
+    if (headers != nil) {
+        for (NSString *headerKey in headers) {
+            [request setValue:[headers valueForKey:headerKey] forHTTPHeaderField:headerKey];
+        }
+    }
+    
+    NSURLSessionDownloadTask *task = [urlSession downloadTaskWithRequest:request];
     RNBGDTaskConfig *taskConfig = [[RNBGDTaskConfig alloc] initWithDictionary: @{@"id": identifier, @"destination": destination}];
     taskToConfigMap[task] = taskConfig;
     idToTaskMap[identifier] = task;

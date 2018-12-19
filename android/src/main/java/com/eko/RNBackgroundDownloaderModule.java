@@ -11,6 +11,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
@@ -149,6 +150,7 @@ public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule imp
     String id = options.getString("id");
     String url = options.getString("url");
     String destination = options.getString("destination");
+    ReadableMap headers = options.getMap("headers");
 
     if (id == null || url == null || destination == null) {
       Log.e(getName(), "id, url and destination must be set");
@@ -157,6 +159,13 @@ public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule imp
 
     RNBGDTaskConfig config = new RNBGDTaskConfig(id);
     Request request = new Request(url, destination);
+    if (headers != null) {
+      ReadableMapKeySetIterator it = headers.keySetIterator();
+      while (it.hasNextKey()) {
+        String headerKey = it.nextKey();
+        request.addHeader(headerKey, headers.getString(headerKey));
+      }
+    }
     request.setPriority(options.hasKey("priority") ? Priority.valueOf(options.getInt("priority")) : Priority.NORMAL);
     request.setNetworkType(options.hasKey("network") ? NetworkType.valueOf(options.getInt("network")) : NetworkType.ALL);
     fetch.enqueue(request, null, null);
