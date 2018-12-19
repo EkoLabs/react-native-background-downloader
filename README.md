@@ -127,6 +127,38 @@ for (let task of lostTask) {
 
 `task.id` is very important for re-attaching the download task with any UI component representing that task, this is why you need to make sure to give sensible IDs that you know what to do with, try to avoid using random IDs.
 
+### Using costume headers
+If you need to send costume headers with your download request, you can do in it 2 ways:
+
+1) Globally using `RNBackgroundDownloader.setHeaders()`:
+```javascript
+RNBackgroundDownloader.setHeaders({
+    Authorization: 'Bearer 2we$@$@Ddd223'
+});
+```
+This way, all downloads with have the given headers.
+
+2) Per download by passing a headers object in the options of `RNBackgroundDownloader.download()`:
+```javascript
+let task = RNBackgroundDownloader.download({
+	id: 'file123',
+	url: 'https://link-to-very.large/file.zip'
+	destination: `${RNBackgroundDownloader.directories.documents}/file.zip`,
+	headers: {
+	    Authorization: 'Bearer 2we$@$@Ddd223'
+	}
+}).begin((expectedBytes) => {
+	console.log(`Going to download ${expectedBytes} bytes!`);
+}).progress((percent) => {
+	console.log(`Downloaded: ${percent * 100}%`);
+}).done(() => {
+	console.log('Download is done!');
+}).error((error) => {
+	console.log('Download canceled due to error: ', error);
+});
+```
+Headers given in the `download` function are **merged** with the ones given in `setHeaders`.
+
 ## API
 
 ### RNBackgroundDownloader
@@ -144,6 +176,7 @@ An object containing options properties
 | `id`          | String                                           | ✅        | All       | A Unique ID to provide for this download. This ID will help to identify the download task when the app re-launches                                                               |
 | `url`         | String                                           | ✅        | All       | URL to file you want to download                                                                                                                                                 |
 | `destination` | String                                           | ✅        | All       | Where to copy the file to once the download is done                                                                                                                              |
+| `headers`      | Object                                           |           | All       | Costume headers to add to the download request. These are merged with the headers given in the `setHeaders` function
 | `priority`    | [Priority (enum)](#priority-enum---android-only) |          | Android   | The priority of the download. On Android, downloading is limited to 4 simultaneous instances where further downloads are queued. Priority helps in deciding which download to pick next from the queue. **Default:** Priority.MEDIUM |
 | `network`     | [Network (enum)](#network-enum---android-only)   |          | Android   | Give your the ability to limit the download to WIFI only. **Default:** Network.ALL                                                                                               |
 
@@ -158,6 +191,12 @@ Checks for downloads that ran in background while you app was terminated. Recomm
 **returns**
 
 `DownloadTask[]` - Array of tasks that were running in the background so you can re-attach callbacks to them
+
+### `setHeaders(headers)`
+
+Sets headers to use in all future downloads.
+
+**headers** - Object
 
 ### DownloadTask
 
