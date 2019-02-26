@@ -17,6 +17,6 @@ android {
 
 dependencies {
     //noinspection GradleDynamicVersion
-    provided 'com.facebook.react:react-native:+'
+    implementation 'com.facebook.react:react-native:+'
     compile "com.tonyodev.fetch2:fetch2:2.0.0-RC12"
 }
