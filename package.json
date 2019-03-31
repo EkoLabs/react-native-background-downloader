@@ -1,6 +1,6 @@
 {
   "name": "react-native-background-downloader",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "A library for React-Native to help you download large files on iOS and Android both in the foreground and most importantly in the background.",
   "main": "index.js",
   "scripts": {
