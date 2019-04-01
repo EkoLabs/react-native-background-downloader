@@ -1,4 +1,4 @@
-rootProject.name = 'testApp2'
+rootProject.name = 'testApp'
 include ':react-native-background-downloader'
 project(':react-native-background-downloader').projectDir = new File(rootProject.projectDir, '../../android')
 
