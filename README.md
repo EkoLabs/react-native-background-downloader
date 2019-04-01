@@ -9,9 +9,9 @@ On iOS, if you want to download big files no matter the state of your app, wethe
 
 This API handles your downloads separately from your app and only keeps it informed using delegates.
 
-On Android we are simulating this process with a separate service dedicated to just downloading to make sure your downloads don't stop even if your main activity is.
+On Android we are simulating this process with a wonderful library called [Fetch2](https://github.com/tonyofrancis/Fetch)
 
-The real challenge using this method is making sure the app's UI if always up-to-date with the downloads that are happening in another process because your app might startup from scratch while the downloads are still running.
+The real challenge of using this method is making sure the app's UI if always up-to-date with the downloads that are happening in another process because your app might startup from scratch while the downloads are still running.
 
 `react-native-background-downloader` gives you an easy API to both downloading large files and re-attaching to those downloads once your app launches again.
 
@@ -23,7 +23,9 @@ The real challenge using this method is making sure the app's UI if always up-to
 
 ## Getting started
 
-`$ npm install react-native-background-downloader --save`
+`$ yarn add react-native-background-downloader`
+
+For **`RN <= 0.57.0`** use `$ yarn add react-native-background-downloader@1.1.0`
 
 ### Mostly automatic installation
 
