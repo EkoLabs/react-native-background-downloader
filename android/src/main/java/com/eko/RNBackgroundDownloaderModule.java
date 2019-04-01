@@ -1,8 +1,6 @@
 package com.eko;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
@@ -18,12 +16,16 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.tonyodev.fetch2.Download;
 import com.tonyodev.fetch2.Error;
 import com.tonyodev.fetch2.Fetch;
+import com.tonyodev.fetch2.FetchConfiguration;
 import com.tonyodev.fetch2.FetchListener;
-import com.tonyodev.fetch2.Func;
 import com.tonyodev.fetch2.NetworkType;
 import com.tonyodev.fetch2.Priority;
 import com.tonyodev.fetch2.Request;
 import com.tonyodev.fetch2.Status;
+import com.tonyodev.fetch2core.DownloadBlock;
+import com.tonyodev.fetch2core.Func;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,9 +71,10 @@ public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule imp
     super(reactContext);
 
     loadConfigMap();
-    fetch = new Fetch.Builder(this.getReactApplicationContext(), "RNBackgroundDownloader")
+    FetchConfiguration fetchConfiguration = new FetchConfiguration.Builder(this.getReactApplicationContext())
             .setDownloadConcurrentLimit(4)
             .build();
+    fetch = Fetch.Impl.getInstance(fetchConfiguration);
     fetch.addListener(this);
   }
 
@@ -201,9 +204,9 @@ public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule imp
 
   @ReactMethod
   public void checkForExistingDownloads(final Promise promise) {
-    fetch.getDownloads(new Func<List<? extends Download>>() {
+    fetch.getDownloads(new Func<List<Download>>() {
       @Override
-      public void call(List<? extends Download> downloads) {
+      public void call(@NotNull List<Download> downloads) {
         WritableArray foundIds = Arguments.createArray();
 
         for (Download download : downloads) {
@@ -232,33 +235,10 @@ public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule imp
 
   // Fetch API
   @Override
-  public void onQueued(Download download) {
-
-  }
-
-  @Override
   public void onCompleted(Download download) {
     WritableMap params = Arguments.createMap();
     params.putString("id", requestIdToConfig.get(download.getId()).id);
     ee.emit("downloadComplete", params);
-
-    removeFromMaps(download.getId());
-    fetch.remove(download.getId());
-  }
-
-  @Override
-  public void onError(Download download) {
-    Error error = download.getError();
-    Throwable throwable = error.getThrowable();
-
-    WritableMap params = Arguments.createMap();
-    params.putString("id", requestIdToConfig.get(download.getId()).id);
-    if (error == Error.UNKNOWN && throwable != null) {
-      params.putString("error", throwable.getLocalizedMessage());
-    } else {
-      params.putString("error", error.toString());
-    }
-    ee.emit("downloadFailed", params);
 
     removeFromMaps(download.getId());
     fetch.remove(download.getId());
@@ -316,6 +296,46 @@ public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule imp
 
   @Override
   public void onDeleted(Download download) {
+
+  }
+
+  @Override
+  public void onAdded(Download download) {
+
+  }
+
+  @Override
+  public void onQueued(Download download, boolean b) {
+
+  }
+
+  @Override
+  public void onWaitingNetwork(Download download) {
+
+  }
+
+  @Override
+  public void onError(Download download, Error error, Throwable throwable) {
+    WritableMap params = Arguments.createMap();
+    params.putString("id", requestIdToConfig.get(download.getId()).id);
+    if (error == Error.UNKNOWN && throwable != null) {
+      params.putString("error", throwable.getLocalizedMessage());
+    } else {
+      params.putString("error", error.toString());
+    }
+    ee.emit("downloadFailed", params);
+
+    removeFromMaps(download.getId());
+    fetch.remove(download.getId());
+  }
+
+  @Override
+  public void onDownloadBlockUpdated(Download download, DownloadBlock downloadBlock, int i) {
+
+  }
+
+  @Override
+  public void onStarted(Download download, List<? extends DownloadBlock> list, int i) {
 
   }
 }
