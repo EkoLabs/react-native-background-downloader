@@ -116,7 +116,7 @@ Add this code to app's init stage, and you'll never lose a download again!
 import RNBackgroundDownloader from 'react-native-background-downloader';
 
 let lostTasks = await RNBackgroundDownloader.checkForExistingDownloads();
-for (let task of lostTask) {
+for (let task of lostTasks) {
 	console.log(`Task ${task.id} was found!`);
 	task.progress((percent) => {
 		console.log(`Downloaded: ${percent * 100}%`);
