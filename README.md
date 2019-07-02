@@ -1,3 +1,5 @@
+![react-native-background-downloader banner](https://d1w2zhnqcy4l8f.cloudfront.net/content/falcon/production/projects/V5EEOX_fast/RNBD-190702083358.png)
+
 [![npm version](https://badge.fury.io/js/react-native-background-downloader.svg)](https://badge.fury.io/js/react-native-background-downloader)
 
 # react-native-background-downloader
