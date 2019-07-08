@@ -17,7 +17,7 @@ static CompletionHandler storedCompletionHandler;
     NSURLSession *urlSession;
     NSURLSessionConfiguration *sessionConfig;
     NSMutableDictionary<NSString *, RNBGDTaskConfig *> *urlToConfigMap;
-    NSMutableDictionary<NSURLSessionTask *, RNBGDTaskConfig *> *taskToConfigMap;
+    NSMutableDictionary<NSNumber *, RNBGDTaskConfig *> *taskToConfigMap;
     NSMutableDictionary<NSString *, NSURLSessionDownloadTask *> *idToTaskMap;
     NSMutableDictionary<NSString *, NSData *> *idToResumeDataMap;
     NSMutableDictionary<NSString *, NSNumber *> *idToPercentMap;
@@ -81,8 +81,9 @@ RCT_EXPORT_MODULE();
 }
 
 - (void)removeTaskFromMap: (NSURLSessionTask *)task {
-    RNBGDTaskConfig *taskConfig = taskToConfigMap[task];
-    [taskToConfigMap removeObjectForKey:task];
+    NSNumber *taskId = @(task.taskIdentifier);
+    RNBGDTaskConfig *taskConfig = taskToConfigMap[taskId];
+    [taskToConfigMap removeObjectForKey:taskId];
     [urlToConfigMap removeObjectForKey:task.currentRequest.URL.absoluteString];
     [[NSUserDefaults standardUserDefaults] setObject:[self serialize: urlToConfigMap] forKey:URL_TO_CONFIG_MAP_KEY];
     if (taskConfig) {
@@ -125,7 +126,7 @@ RCT_EXPORT_METHOD(download: (NSDictionary *) options) {
     
     NSURLSessionDownloadTask *task = [urlSession downloadTaskWithRequest:request];
     RNBGDTaskConfig *taskConfig = [[RNBGDTaskConfig alloc] initWithDictionary: @{@"id": identifier, @"destination": destination}];
-    taskToConfigMap[task] = taskConfig;
+    taskToConfigMap[@(task.taskIdentifier)] = taskConfig;
     idToTaskMap[identifier] = task;
     idToPercentMap[identifier] = @0.0;
     
@@ -179,7 +180,7 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
                                       @"percent": percent
                                       }];
                 taskConfig.reportedBegin = YES;
-                taskToConfigMap[task] = taskConfig;
+                taskToConfigMap[@(task.taskIdentifier)] = taskConfig;
                 idToTaskMap[taskConfig.id] = task;
                 idToPercentMap[taskConfig.id] = percent;
             } else {
@@ -192,7 +193,7 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
 
 #pragma mark - NSURLSessionDownloadDelegate methods
 - (void)URLSession:(nonnull NSURLSession *)session downloadTask:(nonnull NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(nonnull NSURL *)location {
-    RNBGDTaskConfig *taskCofig = taskToConfigMap[downloadTask];
+    RNBGDTaskConfig *taskCofig = taskToConfigMap[@(downloadTask.taskIdentifier)];
     if (taskCofig != nil) {
         NSFileManager *fileManager = [NSFileManager defaultManager];
         NSURL *destURL = [NSURL fileURLWithPath:taskCofig.destination];
@@ -215,7 +216,7 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
 }
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
-    RNBGDTaskConfig *taskCofig = taskToConfigMap[downloadTask];
+    RNBGDTaskConfig *taskCofig = taskToConfigMap[@(downloadTask.taskIdentifier)];
     if (taskCofig != nil) {
         if (!taskCofig.reportedBegin) {
             [self sendEventWithName:@"downloadBegin" body:@{@"id": taskCofig.id, @"expectedBytes": [NSNumber numberWithLongLong: totalBytesExpectedToWrite]}];
@@ -243,7 +244,7 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error {
-    RNBGDTaskConfig *taskCofig = taskToConfigMap[task];
+    RNBGDTaskConfig *taskCofig = taskToConfigMap[@(task.taskIdentifier)];
     if (error != nil && error.code != -999 && taskCofig != nil) {
         if (self.bridge) {
             [self sendEventWithName:@"downloadFailed" body:@{@"id": taskCofig.id, @"error": [error localizedDescription]}];
