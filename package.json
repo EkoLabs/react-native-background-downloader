@@ -21,6 +21,7 @@
   "files": [
     "README.md",
     "LICENSE",
+    "react-native-background-downloader.podspec",
     "package.json",
     "index.js",
     "lib/",
