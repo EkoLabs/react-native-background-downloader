@@ -84,8 +84,10 @@ RCT_EXPORT_MODULE();
     NSNumber *taskId = @(task.taskIdentifier);
     RNBGDTaskConfig *taskConfig = taskToConfigMap[taskId];
     [taskToConfigMap removeObjectForKey:taskId];
-    [urlToConfigMap removeObjectForKey:task.currentRequest.URL.absoluteString];
-    [[NSUserDefaults standardUserDefaults] setObject:[self serialize: urlToConfigMap] forKey:URL_TO_CONFIG_MAP_KEY];
+    @synchronized (urlToConfigMap) {
+        [urlToConfigMap removeObjectForKey:task.currentRequest.URL.absoluteString];
+        [[NSUserDefaults standardUserDefaults] setObject:[self serialize: urlToConfigMap] forKey:URL_TO_CONFIG_MAP_KEY];
+    }
     if (taskConfig) {
         [idToTaskMap removeObjectForKey:taskConfig.id];
         [idToPercentMap removeObjectForKey:taskConfig.id];
@@ -216,29 +218,31 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
 }
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
-    RNBGDTaskConfig *taskCofig = taskToConfigMap[@(downloadTask.taskIdentifier)];
-    if (taskCofig != nil) {
-        if (!taskCofig.reportedBegin) {
-            [self sendEventWithName:@"downloadBegin" body:@{@"id": taskCofig.id, @"expectedBytes": [NSNumber numberWithLongLong: totalBytesExpectedToWrite]}];
-            urlToConfigMap[downloadTask.currentRequest.URL.absoluteString] = taskCofig;
-            [[NSUserDefaults standardUserDefaults] setObject:[self serialize: urlToConfigMap] forKey:URL_TO_CONFIG_MAP_KEY];
-            taskCofig.reportedBegin = YES;
-        }
-        
-        NSNumber *prevPercent = idToPercentMap[taskCofig.id];
-        NSNumber *percent = [NSNumber numberWithFloat:(float)totalBytesWritten/(float)totalBytesExpectedToWrite];
-        if ([percent floatValue] - [prevPercent floatValue] > 0.01f) {
-            progressReports[taskCofig.id] = @{@"id": taskCofig.id, @"written": [NSNumber numberWithLongLong: totalBytesWritten], @"total": [NSNumber numberWithLongLong: totalBytesExpectedToWrite], @"percent": percent};
-            idToPercentMap[taskCofig.id] = percent;
-        }
-        
-        NSDate *now = [[NSDate alloc] init];
-        if ([now timeIntervalSinceDate:lastProgressReport] > 1.5 && progressReports.count > 0) {
-            if (self.bridge) {
-                [self sendEventWithName:@"downloadProgress" body:[progressReports allValues]];
+    @synchronized (self) {
+        RNBGDTaskConfig *taskCofig = taskToConfigMap[@(downloadTask.taskIdentifier)];
+        if (taskCofig != nil) {
+            if (!taskCofig.reportedBegin) {
+                [self sendEventWithName:@"downloadBegin" body:@{@"id": taskCofig.id, @"expectedBytes": [NSNumber numberWithLongLong: totalBytesExpectedToWrite]}];
+                urlToConfigMap[downloadTask.currentRequest.URL.absoluteString] = taskCofig;
+                [[NSUserDefaults standardUserDefaults] setObject:[self serialize: urlToConfigMap] forKey:URL_TO_CONFIG_MAP_KEY];
+                taskCofig.reportedBegin = YES;
             }
-            lastProgressReport = now;
-            [progressReports removeAllObjects];
+            
+            NSNumber *prevPercent = idToPercentMap[taskCofig.id];
+            NSNumber *percent = [NSNumber numberWithFloat:(float)totalBytesWritten/(float)totalBytesExpectedToWrite];
+            if ([percent floatValue] - [prevPercent floatValue] > 0.01f) {
+                progressReports[taskCofig.id] = @{@"id": taskCofig.id, @"written": [NSNumber numberWithLongLong: totalBytesWritten], @"total": [NSNumber numberWithLongLong: totalBytesExpectedToWrite], @"percent": percent};
+                idToPercentMap[taskCofig.id] = percent;
+            }
+            
+            NSDate *now = [[NSDate alloc] init];
+            if ([now timeIntervalSinceDate:lastProgressReport] > 1.5 && progressReports.count > 0) {
+                if (self.bridge) {
+                    [self sendEventWithName:@"downloadProgress" body:[progressReports allValues]];
+                }
+                lastProgressReport = now;
+                [progressReports removeAllObjects];
+            }
         }
     }
 }
