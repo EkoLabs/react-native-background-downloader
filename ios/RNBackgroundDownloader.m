@@ -121,7 +121,7 @@ RCT_EXPORT_METHOD(download: (NSDictionary *) options) {
         }
     }
     
-    NSURLSessionDownloadTask *task = [urlSession downloadTaskWithRequest:request];
+    NSURLSessionDownloadTask __strong *task = [urlSession downloadTaskWithRequest:request];
     RNBGDTaskConfig *taskConfig = [[RNBGDTaskConfig alloc] initWithDictionary: @{@"id": identifier, @"destination": destination}];
     @synchronized(taskToConfigMap) {
         taskToConfigMap[@(task.taskIdentifier)] = taskConfig;
