@@ -176,7 +176,7 @@ export default class App extends Component {
             .toString(36)
             .substr(2, 6);
         const filePath = `${RNBGD.directories.documents}/${id}`;
-        const url = this.state.url || `${testURL}?${id}`;
+        const url = this.state.url || testURL;
         const task = RNBGD.download({
             id: id,
             url: url,
