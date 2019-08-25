@@ -79,10 +79,8 @@ RCT_EXPORT_MODULE();
 - (void)removeTaskFromMap: (NSURLSessionTask *)task {
     NSNumber *taskId = @(task.taskIdentifier);
     RNBGDTaskConfig *taskConfig = taskToConfigMap[taskId];
-    @synchronized (taskToConfigMap) {
-        [taskToConfigMap removeObjectForKey:taskId];
-        [[NSUserDefaults standardUserDefaults] setObject:[self serialize: taskToConfigMap] forKey:ID_TO_CONFIG_MAP_KEY];
-    }
+    [taskToConfigMap removeObjectForKey:taskId];
+    [[NSUserDefaults standardUserDefaults] setObject:[self serialize: taskToConfigMap] forKey:ID_TO_CONFIG_MAP_KEY];
     if (taskConfig) {
         [idToTaskMap removeObjectForKey:taskConfig.id];
         [idToPercentMap removeObjectForKey:taskConfig.id];
@@ -123,10 +121,8 @@ RCT_EXPORT_METHOD(download: (NSDictionary *) options) {
     
     NSURLSessionDownloadTask __strong *task = [urlSession downloadTaskWithRequest:request];
     RNBGDTaskConfig *taskConfig = [[RNBGDTaskConfig alloc] initWithDictionary: @{@"id": identifier, @"destination": destination}];
-    @synchronized(taskToConfigMap) {
-        taskToConfigMap[@(task.taskIdentifier)] = taskConfig;
-        [[NSUserDefaults standardUserDefaults] setObject:[self serialize: taskToConfigMap] forKey:ID_TO_CONFIG_MAP_KEY];
-    }
+    taskToConfigMap[@(task.taskIdentifier)] = taskConfig;
+    [[NSUserDefaults standardUserDefaults] setObject:[self serialize: taskToConfigMap] forKey:ID_TO_CONFIG_MAP_KEY];
     idToTaskMap[identifier] = task;
     idToPercentMap[identifier] = @0.0;
     
@@ -216,29 +212,27 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
 }
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
-    @synchronized (self) {
-        RNBGDTaskConfig *taskCofig = taskToConfigMap[@(downloadTask.taskIdentifier)];
-        if (taskCofig != nil) {
-            if (!taskCofig.reportedBegin) {
-                [self sendEventWithName:@"downloadBegin" body:@{@"id": taskCofig.id, @"expectedBytes": [NSNumber numberWithLongLong: totalBytesExpectedToWrite]}];
-                taskCofig.reportedBegin = YES;
+    RNBGDTaskConfig *taskCofig = taskToConfigMap[@(downloadTask.taskIdentifier)];
+    if (taskCofig != nil) {
+        if (!taskCofig.reportedBegin) {
+            [self sendEventWithName:@"downloadBegin" body:@{@"id": taskCofig.id, @"expectedBytes": [NSNumber numberWithLongLong: totalBytesExpectedToWrite]}];
+            taskCofig.reportedBegin = YES;
+        }
+        
+        NSNumber *prevPercent = idToPercentMap[taskCofig.id];
+        NSNumber *percent = [NSNumber numberWithFloat:(float)totalBytesWritten/(float)totalBytesExpectedToWrite];
+        if ([percent floatValue] - [prevPercent floatValue] > 0.01f) {
+            progressReports[taskCofig.id] = @{@"id": taskCofig.id, @"written": [NSNumber numberWithLongLong: totalBytesWritten], @"total": [NSNumber numberWithLongLong: totalBytesExpectedToWrite], @"percent": percent};
+            idToPercentMap[taskCofig.id] = percent;
+        }
+        
+        NSDate *now = [[NSDate alloc] init];
+        if ([now timeIntervalSinceDate:lastProgressReport] > 1.5 && progressReports.count > 0) {
+            if (self.bridge) {
+                [self sendEventWithName:@"downloadProgress" body:[progressReports allValues]];
             }
-            
-            NSNumber *prevPercent = idToPercentMap[taskCofig.id];
-            NSNumber *percent = [NSNumber numberWithFloat:(float)totalBytesWritten/(float)totalBytesExpectedToWrite];
-            if ([percent floatValue] - [prevPercent floatValue] > 0.01f) {
-                progressReports[taskCofig.id] = @{@"id": taskCofig.id, @"written": [NSNumber numberWithLongLong: totalBytesWritten], @"total": [NSNumber numberWithLongLong: totalBytesExpectedToWrite], @"percent": percent};
-                idToPercentMap[taskCofig.id] = percent;
-            }
-            
-            NSDate *now = [[NSDate alloc] init];
-            if ([now timeIntervalSinceDate:lastProgressReport] > 1.5 && progressReports.count > 0) {
-                if (self.bridge) {
-                    [self sendEventWithName:@"downloadProgress" body:[progressReports allValues]];
-                }
-                lastProgressReport = now;
-                [progressReports removeAllObjects];
-            }
+            lastProgressReport = now;
+            [progressReports removeAllObjects];
         }
     }
 }
