@@ -9,14 +9,13 @@
 #import "RNBackgroundDownloader.h"
 #import "RNBGDTaskConfig.h"
 
-#define URL_TO_CONFIG_MAP_KEY @"com.eko.bgdownloadmap"
+#define ID_TO_CONFIG_MAP_KEY @"com.eko.bgdownloadidmap"
 
 static CompletionHandler storedCompletionHandler;
 
 @implementation RNBackgroundDownloader {
     NSURLSession *urlSession;
     NSURLSessionConfiguration *sessionConfig;
-    NSMutableDictionary<NSString *, RNBGDTaskConfig *> *urlToConfigMap;
     NSMutableDictionary<NSNumber *, RNBGDTaskConfig *> *taskToConfigMap;
     NSMutableDictionary<NSString *, NSURLSessionDownloadTask *> *idToTaskMap;
     NSMutableDictionary<NSString *, NSData *> *idToResumeDataMap;
@@ -55,11 +54,10 @@ RCT_EXPORT_MODULE();
 - (id) init {
     self = [super init];
     if (self) {
-        urlToConfigMap = [self deserialize:[[NSUserDefaults standardUserDefaults] objectForKey:URL_TO_CONFIG_MAP_KEY]];
-        if (urlToConfigMap == nil) {
-            urlToConfigMap = [[NSMutableDictionary alloc] init];
+        taskToConfigMap = [self deserialize:[[NSUserDefaults standardUserDefaults] objectForKey:ID_TO_CONFIG_MAP_KEY]];
+        if (taskToConfigMap == nil) {
+            taskToConfigMap = [[NSMutableDictionary alloc] init];
         }
-        taskToConfigMap = [[NSMutableDictionary alloc] init];
         idToTaskMap = [[NSMutableDictionary alloc] init];
         idToResumeDataMap= [[NSMutableDictionary alloc] init];
         idToPercentMap = [[NSMutableDictionary alloc] init];
@@ -81,10 +79,9 @@ RCT_EXPORT_MODULE();
 - (void)removeTaskFromMap: (NSURLSessionTask *)task {
     NSNumber *taskId = @(task.taskIdentifier);
     RNBGDTaskConfig *taskConfig = taskToConfigMap[taskId];
-    [taskToConfigMap removeObjectForKey:taskId];
-    @synchronized (urlToConfigMap) {
-        [urlToConfigMap removeObjectForKey:task.currentRequest.URL.absoluteString];
-        [[NSUserDefaults standardUserDefaults] setObject:[self serialize: urlToConfigMap] forKey:URL_TO_CONFIG_MAP_KEY];
+    @synchronized (taskToConfigMap) {
+        [taskToConfigMap removeObjectForKey:taskId];
+        [[NSUserDefaults standardUserDefaults] setObject:[self serialize: taskToConfigMap] forKey:ID_TO_CONFIG_MAP_KEY];
     }
     if (taskConfig) {
         [idToTaskMap removeObjectForKey:taskConfig.id];
@@ -126,7 +123,10 @@ RCT_EXPORT_METHOD(download: (NSDictionary *) options) {
     
     NSURLSessionDownloadTask *task = [urlSession downloadTaskWithRequest:request];
     RNBGDTaskConfig *taskConfig = [[RNBGDTaskConfig alloc] initWithDictionary: @{@"id": identifier, @"destination": destination}];
-    taskToConfigMap[@(task.taskIdentifier)] = taskConfig;
+    @synchronized(taskToConfigMap) {
+        taskToConfigMap[@(task.taskIdentifier)] = taskConfig;
+        [[NSUserDefaults standardUserDefaults] setObject:[self serialize: taskToConfigMap] forKey:ID_TO_CONFIG_MAP_KEY];
+    }
     idToTaskMap[identifier] = task;
     idToPercentMap[identifier] = @0.0;
     
@@ -161,7 +161,7 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
         NSMutableArray *idsFound = [[NSMutableArray alloc] init];
         for (NSURLSessionDownloadTask *foundTask in downloadTasks) {
             NSURLSessionDownloadTask __strong *task = foundTask;
-            RNBGDTaskConfig *taskConfig = urlToConfigMap[task.currentRequest.URL.absoluteString];
+            RNBGDTaskConfig *taskConfig = taskToConfigMap[@(task.taskIdentifier)];
             if (taskConfig) {
                 if (task.state == NSURLSessionTaskStateCompleted && task.countOfBytesReceived < task.countOfBytesExpectedToReceive) {
                     if (task.error && task.error.code == -999 && task.error.userInfo[NSURLSessionDownloadTaskResumeData] != nil) {
@@ -221,8 +221,6 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
         if (taskCofig != nil) {
             if (!taskCofig.reportedBegin) {
                 [self sendEventWithName:@"downloadBegin" body:@{@"id": taskCofig.id, @"expectedBytes": [NSNumber numberWithLongLong: totalBytesExpectedToWrite]}];
-                urlToConfigMap[downloadTask.currentRequest.URL.absoluteString] = taskCofig;
-                [[NSUserDefaults standardUserDefaults] setObject:[self serialize: urlToConfigMap] forKey:URL_TO_CONFIG_MAP_KEY];
                 taskCofig.reportedBegin = YES;
             }
             
