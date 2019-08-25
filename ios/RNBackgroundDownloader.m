@@ -22,7 +22,6 @@ static CompletionHandler storedCompletionHandler;
     NSMutableDictionary<NSString *, NSData *> *idToResumeDataMap;
     NSMutableDictionary<NSString *, NSNumber *> *idToPercentMap;
     NSMutableDictionary<NSString *, NSDictionary *> *progressReports;
-    NSOperationQueue *downloadOperationsQueue;
     NSDate *lastProgressReport;
 }
 
@@ -67,7 +66,6 @@ RCT_EXPORT_MODULE();
         NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
         NSString *sessonIdentifier = [bundleIdentifier stringByAppendingString:@".backgrounddownloadtask"];
         sessionConfig = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:sessonIdentifier];
-        downloadOperationsQueue = [[NSOperationQueue alloc] init];
         progressReports = [[NSMutableDictionary alloc] init];
         lastProgressReport = [[NSDate alloc] init];
     }
@@ -76,7 +74,7 @@ RCT_EXPORT_MODULE();
 
 - (void)lazyInitSession {
     if (urlSession == nil) {
-        urlSession = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:downloadOperationsQueue];
+        urlSession = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:nil];
     }
 }
 
