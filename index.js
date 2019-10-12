@@ -26,7 +26,7 @@ RNBackgroundDownloaderEmitter.addListener('downloadComplete', event => {
 RNBackgroundDownloaderEmitter.addListener('downloadFailed', event => {
     let task = tasksMap.get(event.id);
     if (task) {
-        task._onError(event.error);
+        task._onError(event.error, event.errorcode);
     }
     tasksMap.delete(event.id);
 });
