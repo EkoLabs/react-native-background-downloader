@@ -18,5 +18,5 @@ android {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'
-    implementation "com.tonyodev.fetch2:fetch2:3.0.3"
+    implementation "androidx.tonyodev.fetch2:xfetch2:3.1.4"
 }
