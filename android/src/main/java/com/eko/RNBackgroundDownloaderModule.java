@@ -14,6 +14,8 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.tonyodev.fetch2.Download;
+import com.tonyodev.fetch2core.Downloader;
+import com.tonyodev.fetch2okhttp.OkHttpDownloader;
 import com.tonyodev.fetch2.Error;
 import com.tonyodev.fetch2.Fetch;
 import com.tonyodev.fetch2.FetchConfiguration;
@@ -39,6 +41,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
+
+import okhttp3.OkHttpClient;
 
 public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule implements FetchListener {
 
@@ -72,14 +76,17 @@ public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule imp
   private DeviceEventManagerModule.RCTDeviceEventEmitter ee;
   private Date lastProgressReport = new Date();
   private HashMap<String, WritableMap> progressReports = new HashMap<>();
-  private static Object sharedLock = new Object(); 
+  private static Object sharedLock = new Object();
 
   public RNBackgroundDownloaderModule(ReactApplicationContext reactContext) {
     super(reactContext);
-
+    OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+    final Downloader okHttpDownloader = new OkHttpDownloader(okHttpClient,
+                Downloader.FileDownloaderType.PARALLEL);
     loadConfigMap();
     FetchConfiguration fetchConfiguration = new FetchConfiguration.Builder(this.getReactApplicationContext())
             .setDownloadConcurrentLimit(4)
+            .setHttpDownloader(okHttpDownloader)
             .build();
     fetch = Fetch.Impl.getInstance(fetchConfiguration);
     fetch.addListener(this);
@@ -163,7 +170,7 @@ public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule imp
       e.printStackTrace();
     }
   }
-  
+
   private int convertErrorCode(Error error) {
     if ((error == Error.FILE_NOT_CREATED)
     || (error == Error.WRITE_PERMISSION_DENIED)) {
@@ -204,7 +211,7 @@ public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule imp
     }
     request.setPriority(options.hasKey("priority") ? Priority.valueOf(options.getInt("priority")) : Priority.NORMAL);
     request.setNetworkType(options.hasKey("network") ? NetworkType.valueOf(options.getInt("network")) : NetworkType.ALL);
-    
+
     fetch.enqueue(request, new Func<Request>() {
         @Override
         public void call(Request download) {
@@ -213,7 +220,7 @@ public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule imp
         @Override
         public void call(Error error) {
           //An error occurred when enqueuing a request.
-          
+
           WritableMap params = Arguments.createMap();
           params.putString("id", id);
           params.putString("error", error.toString());
