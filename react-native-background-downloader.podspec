@@ -1,14 +1,13 @@
+package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
 
 Pod::Spec.new do |s|
-  s.name         = 'react-native-background-downloader'
-  s.version      = '1.0.0'
+  s.name         = package['name']
+  s.version      = package['version']
   s.summary      = 'React Native background downloader'
-  s.description  = <<-DESC
-  A library for React-Native to help you download large files on iOS and Android both in the foreground and most importantly in the background.
-                   DESC
-  s.author       = 'elad@helleko.com'
-  s.homepage     = 'https://github.com/EkoLabs/react-native-background-downloader'
-  s.license      = 'MIT'
+  s.description  = package['description']
+  s.author       = package['author']
+  s.homepage     = package['repository']['url']
+  s.license      = package['license']
   s.platform     = :ios, '7.0'
   s.source       = { git: 'https://github.com/EkoLabs/react-native-background-downloader.git', tag: 'master' }
   s.source_files = 'ios/**/*.{h,m}'
