@@ -312,10 +312,12 @@ public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule imp
       }
 
       removeFromMaps(download.getId());
-      fetch.remove(download.getId());
+      if (!fetch.isClosed()) {
+        fetch.remove(download.getId());
+      }
     }
   }
-
+  
   @Override
   public void onProgress(Download download, long l, long l1) {
     synchronized(sharedLock) {
