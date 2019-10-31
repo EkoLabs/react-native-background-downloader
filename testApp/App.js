@@ -66,7 +66,7 @@ export default class App extends Component {
     async loadDownloads() {
         const mapStr = await AsyncStorage.getItem('idsToData');
         try {
-            this.idsToData = JSON.parse(mapStr);
+            this.idsToData = JSON.parse(mapStr) || {};
         } catch (e) {
             console.error(e);
         }
