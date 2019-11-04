@@ -317,7 +317,7 @@ public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule imp
       }
     }
   }
-  
+
   @Override
   public void onProgress(Download download, long l, long l1) {
     synchronized(sharedLock) {
