@@ -255,8 +255,6 @@ RCT_EXPORT_METHOD(checkForExistingDownloads: (RCTPromiseResolveBlock)resolve rej
                 lastProgressReport = now;
                 [progressReports removeAllObjects];
             }
-            lastProgressReport = now;
-            [progressReports removeAllObjects];
         }
     }
 }
