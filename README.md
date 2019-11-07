@@ -30,6 +30,9 @@ The real challenge of using this method is making sure the app's UI is always up
 For **`RN <= 0.57.0`** use `$ yarn add react-native-background-downloader@1.1.0`
 
 ### Mostly automatic installation
+Any React Native version **`>= 0.60`** supports autolinking so nothing should be done.
+
+For anything **`< 0.60`** run the following link command
 
 `$ react-native link react-native-background-downloader`
 
