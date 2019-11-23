@@ -87,7 +87,7 @@ import RNBackgroundDownloader from 'react-native-background-downloader';
 
 let task = RNBackgroundDownloader.download({
 	id: 'file123',
-	url: 'https://link-to-very.large/file.zip'
+	url: 'https://link-to-very.large/file.zip',
 	destination: `${RNBackgroundDownloader.directories.documents}/file.zip`
 }).begin((expectedBytes) => {
 	console.log(`Going to download ${expectedBytes} bytes!`);
