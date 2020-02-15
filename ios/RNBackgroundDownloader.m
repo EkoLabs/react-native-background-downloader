@@ -65,6 +65,7 @@ RCT_EXPORT_MODULE();
         NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
         NSString *sessonIdentifier = [bundleIdentifier stringByAppendingString:@".backgrounddownloadtask"];
         sessionConfig = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:sessonIdentifier];
+        sessionConfig.HTTPMaximumConnectionsPerHost = 4;
         progressReports = [[NSMutableDictionary alloc] init];
         lastProgressReport = [[NSDate alloc] init];
         sharedLock = [NSNumber numberWithInt:1];
