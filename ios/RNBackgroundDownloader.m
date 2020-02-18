@@ -137,6 +137,7 @@ RCT_EXPORT_METHOD(download: (NSDictionary *) options) {
         idToPercentMap[identifier] = @0.0;
         
         [task resume];
+        lastProgressReport = [[NSDate alloc] init];
     }
 }
 

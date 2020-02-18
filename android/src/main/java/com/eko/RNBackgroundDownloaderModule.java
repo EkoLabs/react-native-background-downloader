@@ -236,6 +236,7 @@ public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule imp
     );
 
     synchronized(sharedLock) {
+      lastProgressReport = new Date();
       idToRequestId.put(id, request.getId());
       requestIdToConfig.put(request.getId(), config);
       saveConfigMap();
