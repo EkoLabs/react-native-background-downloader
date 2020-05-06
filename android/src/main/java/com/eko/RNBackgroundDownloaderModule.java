@@ -319,7 +319,9 @@ public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule imp
       }
 
       removeFromMaps(download.getId());
-      fetch.remove(download.getId());
+      if (!fetch.isClosed()) {
+        fetch.remove(download.getId());
+      }
     }
   }
 

@@ -1,12 +1,15 @@
 apply plugin: 'com.android.library'
 
+def safeExtGet(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdkVersion safeExtGet("compileSdkVersion", 28)
 
     defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdkVersion safeExtGet('minSdkVersion', 16)
+        targetSdkVersion safeExtGet('targetSdkVersion', 28)
         versionCode 1
         versionName "1.0"
         ndk {
@@ -18,12 +21,11 @@ android {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'
-    if (project.properties['android.useAndroidX'] == true) {
-        implementation "androidx.tonyodev.fetch2:xfetch2:3.1.4"
+    if (project.properties['android.useAndroidX'] == 'true' || project.properties['android.useAndroidX'] == true) {
+        api "androidx.tonyodev.fetch2:xfetch2:3.1.4"
         implementation "androidx.tonyodev.fetch2okhttp:xfetch2okhttp:3.1.4"
-
     } else {
-        implementation "com.tonyodev.fetch2:fetch2:3.0.10"
+        api "com.tonyodev.fetch2:fetch2:3.0.10"
         implementation "com.tonyodev.fetch2okhttp:fetch2okhttp:3.0.10"
     }
 }
