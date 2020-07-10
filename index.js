@@ -49,7 +49,7 @@ export function checkForExistingDownloads() {
     return RNBackgroundDownloader.checkForExistingDownloads()
         .then(foundTasks => {
             return foundTasks.map(taskInfo => {
-                let task = new DownloadTask(taskInfo);
+                let task = new DownloadTask(taskInfo,tasksMap.get(taskInfo.id));
                 if (taskInfo.state === RNBackgroundDownloader.TaskRunning) {
                     task.state = 'DOWNLOADING';
                 } else if (taskInfo.state === RNBackgroundDownloader.TaskSuspended) {
