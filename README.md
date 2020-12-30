@@ -9,13 +9,15 @@ A library for React-Native to help you download large files on iOS and Android b
 ### Why?
 On iOS, if you want to download big files no matter the state of your app, wether it's in the background or terminated by the OS, you have to use a system API called `NSURLSession`.
 
-This API handles your downloads separately from your app and only keeps it informed using delegates.
+This API handles your downloads separately from your app and only keeps it informed using delegates (Read: [Downloading Files in the Background](https://developer.apple.com/documentation/foundation/url_loading_system/downloading_files_in_the_background)).
 
 On Android we are simulating this process with a wonderful library called [Fetch2](https://github.com/tonyofrancis/Fetch)
 
 The real challenge of using this method is making sure the app's UI is always up-to-date with the downloads that are happening in another process because your app might startup from scratch while the downloads are still running.
 
 `react-native-background-downloader` gives you an easy API to both downloading large files and re-attaching to those downloads once your app launches again.
+
+> **Please Note** - This library was created to better facilitate background downloading on iOS. If you're not aiming to to use the download-in-background functionality, there are better solutions like [RNFS.downloadFile()](https://github.com/itinance/react-native-fs#downloadfileoptions-downloadfileoptions--jobid-number-promise-promisedownloadresult-) which will results in a more stable download experience for your app.
 
 ## ToC
 
