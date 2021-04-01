@@ -74,6 +74,15 @@ RCT_EXPORT_MODULE();
 
 - (void)lazyInitSession {
     if (urlSession == nil) {
+        /**
+         * Updated from the original implementation to fix 'Task created in a session that has been invalidated' exception.
+         * Refer https://github.com/EkoLabs/react-native-background-downloader/issues/31#issuecomment-748984618
+         */
+        NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
+        NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+        NSString *stringToAppend = [@".backgrounddownloadtask_" stringByAppendingString:[timestamp stringValue]];
+        NSString *sessonIdentifier = [bundleIdentifier stringByAppendingString:stringToAppend];
+        sessionConfig = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:sessonIdentifier];
         urlSession = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:nil];
     }
 }
