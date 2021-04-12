@@ -27,6 +27,15 @@ static CompletionHandler storedCompletionHandler;
 
 RCT_EXPORT_MODULE();
 
+/**
+  * Fix for conflict with @react-native-firebase/perf
+  * Lovingly ripped-off from another fork of react-native-background-downloader
+  * https://github.com/behealy/react-native-background-downloader/commit/eebeeda1ab4669802e3114a138d911c6b4036d2f
+*/
+#if RCT_DEBUG
++ (void)initialize {}
+#endif
+
 - (dispatch_queue_t)methodQueue
 {
     return dispatch_queue_create("com.eko.backgrounddownloader", DISPATCH_QUEUE_SERIAL);
