@@ -50,9 +50,9 @@ For anything **`< 0.60`** run the following link command
 
 #### Android
 
-1. Open up `android/app/src/main/java/[...]/MainActivity.java`
+1. Open up `android/app/src/main/java/[...]/MainApplication.java`
   - Add `import com.eko.RNBackgroundDownloaderPackage;` to the imports at the top of the file
-  - Add `new RNBackgroundDownloaderPackage()` to the list returned by the `getPackages()` method
+  - Add `packages.add(new RNBackgroundDownloaderPackage());` to the list returned by the `getPackages()` method
 2. Append the following lines to `android/settings.gradle`:
   	```
   	include ':react-native-background-downloader'
