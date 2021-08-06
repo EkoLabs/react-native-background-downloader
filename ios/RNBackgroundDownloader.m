@@ -27,6 +27,10 @@ static CompletionHandler storedCompletionHandler;
 
 RCT_EXPORT_MODULE();
 
+#if DEBUG
++(void) initialize {}
+#endif
+
 - (dispatch_queue_t)methodQueue
 {
     return dispatch_queue_create("com.eko.backgrounddownloader", DISPATCH_QUEUE_SERIAL);
