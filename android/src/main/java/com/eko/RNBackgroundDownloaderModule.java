@@ -202,6 +202,7 @@ public class RNBackgroundDownloaderModule extends ReactContextBaseJavaModule imp
 
     RNBGDTaskConfig config = new RNBGDTaskConfig(id);
     final Request request = new Request(url, destination);
+    request.setAutoRetryMaxAttempts(15);
     if (headers != null) {
       ReadableMapKeySetIterator it = headers.keySetIterator();
       while (it.hasNextKey()) {
