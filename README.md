@@ -4,7 +4,7 @@
 
 # react-native-background-downloader
 
-## This repo is no longer actively maintained by eko, however you may be interested in checking out this [fork](https://github.com/M56-Studios/react-native-background-downloader) ##
+## This repo is no longer actively maintained by eko, however you may be interested in checking out this [fork](https://github.com/kesha-antonov/react-native-background-downloader) ##
 
 A library for React-Native to help you download large files on iOS and Android both in the foreground and most importantly in the background.
 
