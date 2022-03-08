@@ -27,6 +27,10 @@ static CompletionHandler storedCompletionHandler;
 
 RCT_EXPORT_MODULE();
 
+#if DEBUG
++(void) initialize {}
+#endif
+
 - (dispatch_queue_t)methodQueue
 {
     return dispatch_queue_create("com.eko.backgrounddownloader", DISPATCH_QUEUE_SERIAL);
@@ -62,9 +66,7 @@ RCT_EXPORT_MODULE();
         idToTaskMap = [[NSMutableDictionary alloc] init];
         idToResumeDataMap= [[NSMutableDictionary alloc] init];
         idToPercentMap = [[NSMutableDictionary alloc] init];
-        NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-        NSString *sessonIdentifier = [bundleIdentifier stringByAppendingString:@".backgrounddownloadtask"];
-        sessionConfig = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:sessonIdentifier];
+        [self updateSessionConfig];
         progressReports = [[NSMutableDictionary alloc] init];
         lastProgressReport = [[NSDate alloc] init];
         sharedLock = [NSNumber numberWithInt:1];
@@ -74,8 +76,17 @@ RCT_EXPORT_MODULE();
 
 - (void)lazyInitSession {
     if (urlSession == nil) {
+        [self updateSessionConfig];
         urlSession = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:nil];
     }
+}
+
+- (void)updateSessionConfig {
+    NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
+    NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+    NSString *stringToAppend = [@".backgrounddownloadtask_" stringByAppendingString:[timestamp stringValue]];
+    NSString *sessonIdentifier = [bundleIdentifier stringByAppendingString:stringToAppend];
+    sessionConfig = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:sessonIdentifier];
 }
 
 - (void)removeTaskFromMap: (NSURLSessionTask *)task {
