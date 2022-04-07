@@ -116,7 +116,6 @@ RCT_EXPORT_METHOD(download: (NSDictionary *) options) {
         NSLog(@"[RNBackgroundDownloader] - [Error] id, url and destination must be set");
         return;
     }
-    [self lazyInitSession];
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
     if (headers != nil) {
@@ -126,6 +125,7 @@ RCT_EXPORT_METHOD(download: (NSDictionary *) options) {
     }
     
     @synchronized (sharedLock) {
+        [self lazyInitSession];
         NSURLSessionDownloadTask __strong *task = [urlSession downloadTaskWithRequest:request];
         RNBGDTaskConfig *taskConfig = [[RNBGDTaskConfig alloc] initWithDictionary: @{@"id": identifier, @"destination": destination}];
 
